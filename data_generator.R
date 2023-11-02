@@ -18,19 +18,40 @@ Race <- c(RaceTrial, RaceTarget)
 #for now, just make normal
 BMI<-rnorm(N, 24, 5)
 
-#mispecified variable
-Udiff<- 0
-#runif(1, -1, 1)#size of underlying var difference between trial and target pops - I want this because there should be 2 differences in the population
-#a) different levels of the underlying variable itself and b) differential coding
-UTarget<- rnorm(n, 5+Udiff*.5, 1)
-UTrial<- rnorm(n, 5-Udiff*.5, 1)
-#cutoffs - find way to calculate these
-c1<-5
-c2<-4.5
-VTrial <- ifelse(UTarget<c1, "Low", "High")
-VTarget <- ifelse(UTarget<c2, "Low", "High")
-V <- c(VTrial, VTarget)
+## -- Differentially Specified Variable
 
+# Set parameters
+k <- 0.05
+l <- 0.5
+p <- 0.5
+seed <- 1
+
+sample_V <- function(n=100, k=0.05, l=0.5, p=0.5, seed=1) {
+  # Generate Latent Variable
+  set.seed(seed)
+  UTrial<- rnorm(n)
+  UTarget<- rnorm(n) # TODO are we fine with standard normal latent variables? Any normal variable can be centered and scaled... 
+  
+  # Cut Latent Variable
+  Trial_cut_less <- rbinom(1, 1, prob = p) # Binary indicator for Trial cut point less than Target cut point
+  a <- l - k/2
+  b <- l + k/2
+  a_thresh <- qnorm(a)
+  b_thresh <- qnorm(b)
+  if (Trial_cut_less==1) {
+    VTrial <- ifelse(UTrial < a_thresh, "Low", "High")
+    VTarget <- ifelse(UTarget < b_thresh, "Low", "High")
+  } else {
+    VTrial <- ifelse(UTrial < b_thresh, "Low", "High")
+    VTarget <- ifelse(UTarget < a_thresh, "Low", "High")
+  }
+  
+  V = factor(c(VTrial, VTarget), levels = c("Low", "High"))
+  
+  V_df <- data.frame(population = factor(c(rep("Trial", n), rep("Target", n))), V)
+            
+  return(V_df)
+}
 
 # Create other variables
 ATrial<-rbinom(n, 1, .5)
