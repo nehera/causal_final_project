@@ -24,16 +24,17 @@ BMI<-rnorm(N, 24, 5)
 k <- 0.05
 l <- 0.5
 p <- 0.5
-seed <- 1
 
-sample_V <- function(n=100, k=0.05, l=0.5, p=0.5, seed=1) {
-  # Generate Latent Variable
+sample_V <- function(n=100, k=0.05, l=0.5, seed=1) {
+  
   set.seed(seed)
+  
+  # Generate Latent Variable
   UTrial<- rnorm(n)
   UTarget<- rnorm(n) # TODO are we fine with standard normal latent variables? Any normal variable can be centered and scaled... 
   
   # Cut Latent Variable
-  Trial_cut_less <- rbinom(1, 1, prob = p) # Binary indicator for Trial cut point less than Target cut point
+  Trial_cut_less <- rbinom(1, 1, prob = 0.5) # Binary indicator for Trial cut point less than Target cut point
   a <- l - k/2
   b <- l + k/2
   a_thresh <- qnorm(a)
