@@ -270,9 +270,22 @@ get_result <- function(k, M=50, B=100) {
 #### ---- Analysis Start here
 k_of_interest <- c(0, .05, .2, .5, .8)
 library(parallel)
-ncores <- detectCores()
-results <- mclapply(k_of_interest, get_result, mc.cores = ncores - 1)
-names(results) <- paste("k", k_of_interest, sep = "_")
 
+# Define how many cores to use
+n_cores <- detectCores()
+if (length(k_of_interest) <= n_cores) {
+  job_cores <- length(k_of_interest)
+} else { job_cores <- n_cores }
+
+# Perform the simulation
+start_time <- Sys.time()
+
+results <- mclapply(k_of_interest, get_result, mc.cores = job_cores)
+names(results) <- paste("k", k_of_interest, sep = "_")
 # Save the list as an .rds file
 saveRDS(results, file = "step-4-results.rds")
+
+end_time <- Sys.time()
+
+print("Time elapsed:")
+print(end_time - start_time)
