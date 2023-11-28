@@ -190,7 +190,7 @@ estimate_tates <- function(data) {
 }
 
 # Function to perform bootstrap resampling and estimate the five quantities
-bootstrap_tates <- function(data, B=100) {
+bootstrap_tates <- function(data, B=200) {
   
   # Number of observations
   n_obs <- nrow(data)
@@ -225,7 +225,7 @@ check_inclusion <- function(ci, truth) {
 }
 
 # Get simulation result for a given k
-get_result <- function(k, M=50, B=100) {
+get_result <- function(k, M=100, B=200) {
   
   seed = floor(20*k*M+343)
   set.seed(seed)

@@ -1,5 +1,5 @@
 # Load results .rds file
-results <- load("step-4-results.rds")
+results <- readRDS("step-4-results.rds")
 
 ## Base case: k=0
 result_k0 <- results$k_0
