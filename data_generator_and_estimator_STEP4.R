@@ -1,8 +1,12 @@
 # 2018-2020 NHANES proportion (https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0255583)
 # 2011-2018 NHANES proportion (https://jamanetwork.com/journals/jama/fullarticle/2784659)
 
-library(tidyverse)
-library(dplyr)
+##### ---- Packages
+# Install packages if not installed, load. 
+# p_load checks if a package is installed prior to loading into your work environment. If the package is not installed, it installs the package and then loads it.
+
+if (("pacman" %in% installed.packages()[,"Package"]) == FALSE) { install.packages("pacman") }
+pacman::p_load(tidyverse, dplyr, parallel)
 
 #### ---- Define Custom Functions
 simulate_data <- function(k) {
@@ -269,7 +273,6 @@ get_result <- function(k, M=100, B=200) {
 
 #### ---- Analysis Start here
 k_of_interest <- c(0, .05, .2, .5, .8)
-library(parallel)
 
 # Define how many cores to use
 n_cores <- detectCores()
