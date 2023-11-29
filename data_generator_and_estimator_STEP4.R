@@ -106,16 +106,15 @@ simulate_data <- function(k) {
   beta_male <- 3
   beta_age <- -.2
   beta_bmi <- 1
-  beta_V <- 3
+  beta_U <- 3 
   
   effect_race <- as.matrix(Race_one_hot_encoded) %*% beta_race %>% 
     as.vector()
   
-  Y0 <- beta_male * Male + beta_age * Age + beta_bmi * BMI + beta_V * as.numeric(V=="High") + 
-    effect_race + rnorm(N, beta_0, sd = epsilon) 
-  Y1 <- beta_male * Male + beta_age * Age + beta_bmi * BMI + beta_V * as.numeric(V=="High") + 
-    effect_race + rnorm(N, beta_0, sd = epsilon) + ATE
+  Y0 <- beta_male * Male + beta_age * Age + beta_bmi * BMI + beta_U * U + effect_race + rnorm(N, beta_0, sd = epsilon)
+  Y1 <- beta_male * Male + beta_age * Age + beta_bmi * BMI + beta_U * U + effect_race + rnorm(N, beta_0, sd = epsilon) + ATE
   Y <- ifelse(A==1, Y1, Y0) # Y is NA for subjects in the target population
+
   data <- data.frame(Male, Age, Race, BMI, V, A, S, Y0, Y1, Y)
   
   ## -- Quality Assure Data
