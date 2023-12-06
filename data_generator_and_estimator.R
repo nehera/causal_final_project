@@ -9,6 +9,22 @@ if (("pacman" %in% installed.packages()[,"Package"]) == FALSE) { install.package
 pacman::p_load(tidyverse, dplyr, parallel)
 
 #### ---- Define Custom Functions
+
+# function for generate optimal k
+# dmixt(x = 0, phi = 1, spec1 = "norm", arg1 = list(.1, 1), spec2 = "norm", arg2 = list(-.1, 1))
+optiaml_a1a2 = function(k, mu_trial=mu_trial, mu_target=mu_target){
+  #flip = (-1)^rbinom(1,1,prob = 0.5)
+  a <- 0.5 - k/2
+  b <- 0.5 + k/2
+  
+  f =  function (a1) qnorm(a1,mu_trial,1) - qnorm(2*a-a1,mu_target,1)
+  optimal_a1 = uniroot(f, lower = 0, upper = min(1,2*a))$root
+  a2 = a-optimal_a1
+  
+  return(list(k=k, a1=optimal_a1, a2=a2))
+}
+
+
 simulate_data <- function(k) {
   
   # Parameters for sample sizes
@@ -72,23 +88,18 @@ simulate_data <- function(k) {
   
   # Generate Latent Variable
   Udiff <- runif(1, -1, 1) # Size of underlying var difference between trial and target pops
-  UTrial <- rnorm(N_Trial, -Udiff*0.5, 1)
-  UTarget <- rnorm(N_Target, Udiff*0.5, 1)
+  mu_trial = -Udiff*0.5
+  mu_target = Udiff*0.5
+  UTrial <- rnorm(N_Trial, mu_trial, 1)
+  UTarget <- rnorm(N_Target, mu_target, 1)
   U = c(UTrial, UTarget)
   
-  # Cut Latent Variable
-  Trial_cut_less <- rbinom(1, 1, prob = 0.5) # Binary indicator for Trial cut point less than Target cut point
-  a <- l - k/2 # l=0.5
-  b <- l + k/2
-  a_thresh <- qnorm(a)
-  b_thresh <- qnorm(b)
-  if (Trial_cut_less==1) {
-    VTrial <- ifelse(UTrial < a_thresh, "Low", "High")
-    VTarget <- ifelse(UTarget < b_thresh, "Low", "High")
-  } else {
-    VTrial <- ifelse(UTrial < b_thresh, "Low", "High")
-    VTarget <- ifelse(UTarget < a_thresh, "Low", "High")
-  }
+  a1 = optiaml_a1a2(k=k,mu_trial=mu_trial,mu_target=mu_target)$a1
+  flip = (-1)^rbinom(1,1,prob = 0.5)
+  a_thresh <- flip*qnorm(a1,mu_trial,1)
+  b_thresh <- -a_thresh
+  VTrial <- ifelse(UTrial < a_thresh, "Low", "High")
+  VTarget <- ifelse(UTarget < b_thresh, "Low", "High")
   
   V = factor(c(VTrial, VTarget), levels = c("Low", "High"))
   
@@ -285,7 +296,7 @@ start_time <- Sys.time()
 results <- mclapply(k_of_interest, get_result, mc.cores = job_cores)
 names(results) <- paste("k", k_of_interest, sep = "_")
 # Save the list as an .rds file
-saveRDS(results, file = "step-4-results.rds")
+saveRDS(results, file = "final-results.rds")
 
 end_time <- Sys.time()
 

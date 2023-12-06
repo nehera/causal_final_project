@@ -1,8 +1,8 @@
 #!/bin/bash -l
 
-#SBATCH --job-name=submit_data_generator_and_estimator_STEP4
-#SBATCH --output=submit_data_generator_and_estimator_STEP4_%A_%a.out
-#SBATCH --error=submit_data_generator_and_estimator_STEP4_%A_%a.err
+#SBATCH --job-name=data_generator_and_estimator
+#SBATCH --output=data_generator_and_estimator_%A_%a.out
+#SBATCH --error=data_generator_and_estimator_%A_%a.err
 
 #SBATCH --nodes=1
 #SBATCH --ntasks=8
@@ -17,4 +17,4 @@ cd /home/mfiecas/neher015/causal_final_project
 
 module load R
 
-Rscript data_generator_and_estimator_STEP4.R
+Rscript data_generator_and_estimator.R
