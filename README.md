@@ -1,2 +1,2 @@
 # causal_final_project
-This is Milena, Tiankai, and Aidan's repository for our causal inference final project. 
+This is Milena, Tiankai, and Aidan's repository for our Causal Inference Final Project. In it, we explore the robustness of different generalizability/transportability methods to differential data specification between trial population and target population. 
